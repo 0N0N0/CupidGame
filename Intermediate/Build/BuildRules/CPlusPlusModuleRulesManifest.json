@@ -1,0 +1,8 @@
+{
+	"SourceFiles": [
+		"C:\\Unreal Engine 5\\Unreal Projects\\CPlusPlus\\Source\\CPlusPlus\\CPlusPlus.Build.cs",
+		"C:\\Unreal Engine 5\\Unreal Projects\\CPlusPlus\\Source\\CPlusPlus.Target.cs",
+		"C:\\Unreal Engine 5\\Unreal Projects\\CPlusPlus\\Source\\CPlusPlusEditor.Target.cs"
+	],
+	"EngineVersion": "5.3.2"
+}
