@@ -15,12 +15,6 @@ public:
 	// Sets default values for this character's properties
 	AMyCharacter();
 
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-		void SpawnActor();
-
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<AActor> actorBPToSpawn;
-
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -44,13 +38,13 @@ protected:
 	void MyStopJumping();
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-	bool IsJumping;
+	bool bIsJumping;
 
 	void Shoot();
 	void StopShooting();
 
 	UPROPERTY(BlueprintReadOnly, Category = "Action", meta = (AllowPrivateAccess = "true"))
-	bool IsShooting;
+	bool bIsShooting;
 
 private:	
 	UPROPERTY(EditDefaultsOnly, Category = Input)
@@ -65,8 +59,22 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Animation montage")
 	UAnimMontage* ShootingMontage;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
+	TSubclassOf<AActor> BulletBP;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
+	FVector Offset = FVector(20, 150, 25);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
+	FVector Scale = FVector(0.1, 0.1, 0.1);
+
+
 	void PlayMontageAndSetTimer(UAnimMontage* MontageToPlay);
 	void EnableWalk();
 
 	FTimerHandle TimerHandle;
+	FTimerHandle TimerHandleForBullet;
+
+
+	void SpawnBullet();
 };

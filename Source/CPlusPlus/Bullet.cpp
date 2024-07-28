@@ -3,6 +3,8 @@
 
 #include "Bullet.h"
 
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 ABullet::ABullet()
 {
@@ -21,6 +23,8 @@ void ABullet::BeginPlay()
 void ABullet::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LoveEffect, HitLocation);
 
 	if (Other->ActorHasTag(""))
 	{

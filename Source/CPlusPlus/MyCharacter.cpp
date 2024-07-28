@@ -13,14 +13,15 @@ AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	IsJumping = false;
 }
 
 // Called when the game starts or when spawned
 void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	bIsJumping = false;
+	bIsShooting = false;
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -77,24 +78,30 @@ void AMyCharacter::MyJump()
 		Jump();
 	}
 
-	IsJumping = true;
+	bIsJumping = true;
 }
 
 void AMyCharacter::MyStopJumping()
 {
 	StopJumping();
-	IsJumping = false;
+	bIsJumping = false;
 }
 
 void AMyCharacter::Shoot()
 {
-	IsShooting = true;
-	PlayMontageAndSetTimer(ShootingMontage);
+	if (!bIsShooting && !GetCharacterMovement()->IsFalling())
+	{
+		bIsShooting = true;
+
+		PlayMontageAndSetTimer(ShootingMontage);
+
+		GetWorldTimerManager().SetTimer(TimerHandleForBullet, this, &AMyCharacter::SpawnBullet, 1.0f, false);
+	}
 }
 
 void AMyCharacter::StopShooting()
 {
-	IsShooting = false;
+	
 }
 
 void AMyCharacter::PlayMontageAndSetTimer(UAnimMontage* MontageToPlay)
@@ -106,7 +113,7 @@ void AMyCharacter::PlayMontageAndSetTimer(UAnimMontage* MontageToPlay)
 			GetCharacterMovement()->DisableMovement();
 
 			int32 sectionIndex = ShootingMontage->GetSectionIndex("Default");
-			int32 sectionLength = ShootingMontage->GetSectionLength(sectionIndex);
+			float sectionLength = ShootingMontage->GetSectionLength(sectionIndex);
 
 			PlayAnimMontage(MontageToPlay);
 
@@ -117,6 +124,8 @@ void AMyCharacter::PlayMontageAndSetTimer(UAnimMontage* MontageToPlay)
 
 void AMyCharacter::EnableWalk()
 {
+	bIsShooting = false;
+
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 }
 
@@ -154,18 +163,28 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 bool AMyCharacter::GetIsJumping()
 {
-	return IsJumping;
+	return bIsJumping;
 }
 
 bool AMyCharacter::GetIsShooting()
 {
-	return IsShooting;
+	return bIsShooting;
 }
 
-void AMyCharacter::SpawnActor()
+void AMyCharacter::SpawnBullet()
 {
+	//GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, TEXT("BulletSpawned!"));
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-	GetWorld()->SpawnActor<AActor>(actorBPToSpawn, GetActorTransform(), spawnParams);
+	FRotator actorRotation = GetActorTransform().GetRotation().GetForwardVector().ToOrientationRotator();
+	FVector actorLocation = FVector(GetActorTransform().GetLocation().X, GetActorTransform().GetLocation().Y, GetActorTransform().GetLocation().Z);
+	actorLocation += GetActorTransform().GetRotation().GetRightVector() * Offset.X;
+	actorLocation += GetActorTransform().GetRotation().GetForwardVector() * Offset.Y;
+	actorLocation += GetActorTransform().GetRotation().GetUpVector() * Offset.Z;
+	FVector actorScale = Scale;
+
+	FTransform transform = FTransform(actorRotation, actorLocation, actorScale);
+
+	GetWorld()->SpawnActor<AActor>(BulletBP, transform, spawnParams);
 }
