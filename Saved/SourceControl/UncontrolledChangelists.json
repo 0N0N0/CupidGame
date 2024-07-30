@@ -91,6 +91,8 @@
 				"C:/Unreal Engine 5/Unreal Projects/CPlusPlus/Content/Blueprints/Widgets/WBP_Scope.uasset",
 				"C:/Unreal Engine 5/Unreal Projects/CPlusPlus/Content/Input/TurnUpDownAction.uasset",
 				"C:/Unreal Engine 5/Unreal Projects/CPlusPlus/Content/Input/TurnLeftRightAction.uasset",
+				"C:/Unreal Engine 5/Unreal Projects/CPlusPlus/Content/Input/MoveForwardBackwardAction.uasset",
+				"C:/Unreal Engine 5/Unreal Projects/CPlusPlus/Content/Input/MoveLeftRightAction.uasset",
 				"C:/Unreal Engine 5/Unreal Projects/CPlusPlus/Content/Blueprints/Widgets/WBP_ScopeWidget.uasset",
 				"C:/Unreal Engine 5/Unreal Projects/CPlusPlus/Content/Animation/BS_Shoot.uasset",
 				"C:/Unreal Engine 5/Unreal Projects/CPlusPlus/Content/Blueprints/BP_ActorToSpawn.uasset",

@@ -35,8 +35,8 @@ protected:
 	void TurnLeftRight(const FInputActionValue& Value);
 	void TurnUpDown(const FInputActionValue& Value);
 
-	void MoveForwardBackward(float value);
-	void MoveLeftRight(float value);
+	void MoveForwardBackward(const FInputActionValue& Value);
+	void MoveLeftRight(const FInputActionValue& Value);
 
 	void MyJump();
 	void MyStopJumping();
@@ -71,6 +71,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	float TurnUpDownRate = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	class UInputAction* MoveForwardBackwardAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	class UInputAction* MoveLeftRightAction;
+
 
 	UPROPERTY(EditDefaultsOnly, Category = "Animation montage")
 	UAnimMontage* ShootingMontage;

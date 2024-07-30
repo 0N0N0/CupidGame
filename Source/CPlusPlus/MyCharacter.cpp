@@ -69,9 +69,11 @@ void AMyCharacter::TurnUpDown(const FInputActionValue& Value)
 }
 
 
-void AMyCharacter::MoveForwardBackward(float value)
+void AMyCharacter::MoveForwardBackward(const FInputActionValue& Value)
 {
-	if (value == 0)
+	const float moveValue = Value.Get<float>();
+
+	if (moveValue == 0)
 	{
 		return;
 	}
@@ -80,12 +82,16 @@ void AMyCharacter::MoveForwardBackward(float value)
 	const FRotator YawRotation(0.0, ControllerRotation.Yaw, 0.0);
 	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	
-	AddMovementInput(Direction, value);
+	AddMovementInput(Direction, moveValue);
 }
 
-void AMyCharacter::MoveLeftRight(float value)
+void AMyCharacter::MoveLeftRight(const FInputActionValue& Value)
 {
-	if (value == 0)
+	const float moveValue = Value.Get<float>();
+
+	//UE_LOG(LogTemp, Warning, TEXT("TurnUpDown input: %f"), moveValue);
+
+	if (moveValue == 0)
 	{
 		return;
 	}
@@ -94,7 +100,7 @@ void AMyCharacter::MoveLeftRight(float value)
 	const FRotator YawRotation(0.0, ControllerRotation.Yaw, 0.0);
 	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-	AddMovementInput(Direction, value);
+	AddMovementInput(Direction, moveValue);
 }
 
 void AMyCharacter::MyJump()
@@ -173,9 +179,6 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		return;
 	}
 
-	PlayerInputComponent->BindAxis("MoveForwardBackward", this, &AMyCharacter::MoveForwardBackward);
-	PlayerInputComponent->BindAxis("MoveLeftRight", this, &AMyCharacter::MoveLeftRight);
-
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AMyCharacter::MyJump);
@@ -186,6 +189,9 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 		EnhancedInputComponent->BindAction(TurnLeftRightAction, ETriggerEvent::Triggered, this, &AMyCharacter::TurnLeftRight);
 		EnhancedInputComponent->BindAction(TurnUpDownAction, ETriggerEvent::Triggered, this, &AMyCharacter::TurnUpDown);
+
+		EnhancedInputComponent->BindAction(MoveForwardBackwardAction, ETriggerEvent::Triggered, this, &AMyCharacter::MoveForwardBackward);
+		EnhancedInputComponent->BindAction(MoveLeftRightAction, ETriggerEvent::Triggered, this, &AMyCharacter::MoveLeftRight);
 	}
 }
 
