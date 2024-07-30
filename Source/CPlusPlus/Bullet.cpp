@@ -24,11 +24,9 @@ void ABullet::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class 
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LoveEffect, HitLocation);
-
-	if (Other->ActorHasTag(""))
+	if (Other->ActorHasTag("NPC"))
 	{
-		
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LoveEffect, HitLocation);
 	}
 }
 
@@ -36,6 +34,4 @@ void ABullet::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class 
 void ABullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
-

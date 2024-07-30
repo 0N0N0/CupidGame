@@ -16,7 +16,8 @@ public class CPlusPlus : ModuleRules
 			"EnhancedInput",
 			"AIModule",
 			"GameplayTasks",
-			"NavigationSystem"
+			"NavigationSystem",
+			"UMG"
 		});
 	}
 }

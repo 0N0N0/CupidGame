@@ -77,4 +77,7 @@ private:
 
 
 	void SpawnBullet();
+	void LineTrace();
+
+	TSubclassOf<class UUserWidget> ScopeWidgetClass;
 };

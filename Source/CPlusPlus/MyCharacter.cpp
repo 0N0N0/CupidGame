@@ -7,12 +7,22 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include <Kismet/GameplayStatics.h>
+#include "Blueprint/UserWidget.h"
+
 
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Find the widget class in the constructor
+	static ConstructorHelpers::FClassFinder<UUserWidget> ScopeWidget(TEXT("/Game/Blueprints/Widgets/WBP_Scope"));
+	if (ScopeWidget.Succeeded())
+	{
+		ScopeWidgetClass = ScopeWidget.Class;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -29,6 +39,19 @@ void AMyCharacter::BeginPlay()
 			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+	}
+
+	if (ScopeWidgetClass != nullptr)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			UUserWidget* Scope = CreateWidget<UUserWidget>(World, ScopeWidgetClass);
+			if (Scope)
+			{
+				Scope->AddToViewport();
+			}
 		}
 	}
 }
@@ -89,6 +112,8 @@ void AMyCharacter::MyStopJumping()
 
 void AMyCharacter::Shoot()
 {
+	LineTrace();
+
 	if (!bIsShooting && !GetCharacterMovement()->IsFalling())
 	{
 		bIsShooting = true;
@@ -187,4 +212,34 @@ void AMyCharacter::SpawnBullet()
 	FTransform transform = FTransform(actorRotation, actorLocation, actorScale);
 
 	GetWorld()->SpawnActor<AActor>(BulletBP, transform, spawnParams);
+}
+
+void AMyCharacter::LineTrace()
+{
+	auto temp = UGameplayStatics::GetPlayerCameraManager(this, 0);
+
+	FHitResult Looked;
+	//FVector Start = temp->GetCameraLocation();
+	//FVector End = temp->GetCameraLocation() + (GetActorForwardVector() * 500);
+
+	FVector Start = GetActorTransform().GetLocation();
+	FVector End = GetActorTransform().GetLocation() + (GetActorForwardVector() * 500);
+
+	FCollisionObjectQueryParams ObjectParams;
+	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+
+	GetWorld()->LineTraceSingleByObjectType(Looked, Start, End, ObjectParams, Params);
+
+	//if (Looked.GetActor())
+	//{
+	//	// add snapping to object
+	//	LookedActor = Looked.GetActor();
+	//	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, LookedActor->GetActorLabel());
+	//}
+
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, 0, 5.f);
 }
