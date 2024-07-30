@@ -56,15 +56,18 @@ void AMyCharacter::BeginPlay()
 	}
 }
 
-void AMyCharacter::TurnLeftRight(float value)
+void AMyCharacter::TurnLeftRight(const FInputActionValue& Value)
 {
-	AddControllerYawInput(value);
+	const float TurnValue = Value.Get<float>();
+	AddControllerYawInput(TurnValue * TurnLeftRightRate);
 }
 
-void AMyCharacter::TurnUpDown(float value)
+void AMyCharacter::TurnUpDown(const FInputActionValue& Value)
 {
-	AddControllerPitchInput(value);
+	const float LookUpValue = Value.Get<float>();
+	AddControllerPitchInput(-(LookUpValue) * TurnUpDownRate);
 }
+
 
 void AMyCharacter::MoveForwardBackward(float value)
 {
@@ -170,9 +173,6 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		return;
 	}
 
-	PlayerInputComponent->BindAxis("TurnLeftRight", this, &AMyCharacter::TurnLeftRight);
-	PlayerInputComponent->BindAxis("TurnUpDown", this, &AMyCharacter::TurnUpDown);
-
 	PlayerInputComponent->BindAxis("MoveForwardBackward", this, &AMyCharacter::MoveForwardBackward);
 	PlayerInputComponent->BindAxis("MoveLeftRight", this, &AMyCharacter::MoveLeftRight);
 
@@ -183,6 +183,9 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AMyCharacter::Shoot);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AMyCharacter::StopShooting);
+
+		EnhancedInputComponent->BindAction(TurnLeftRightAction, ETriggerEvent::Triggered, this, &AMyCharacter::TurnLeftRight);
+		EnhancedInputComponent->BindAction(TurnUpDownAction, ETriggerEvent::Triggered, this, &AMyCharacter::TurnUpDown);
 	}
 }
 

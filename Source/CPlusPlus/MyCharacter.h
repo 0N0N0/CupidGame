@@ -4,6 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+
+#include "EnhancedInputComponent.h"
+#include "InputAction.h"
+
 #include "MyCharacter.generated.h"
 
 UCLASS()
@@ -28,8 +32,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void TurnLeftRight(float value);
-	void TurnUpDown(float value);
+	void TurnLeftRight(const FInputActionValue& Value);
+	void TurnUpDown(const FInputActionValue& Value);
 
 	void MoveForwardBackward(float value);
 	void MoveLeftRight(float value);
@@ -55,6 +59,18 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputAction* ShootAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	class UInputAction* TurnLeftRightAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	float TurnLeftRightRate = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	class UInputAction* TurnUpDownAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	float TurnUpDownRate = 0.1f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Animation montage")
 	UAnimMontage* ShootingMontage;
