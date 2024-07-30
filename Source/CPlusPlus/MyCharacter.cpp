@@ -225,14 +225,50 @@ void AMyCharacter::SpawnBullet()
 
 void AMyCharacter::LineTrace()
 {
-	auto temp = UGameplayStatics::GetPlayerCameraManager(this, 0);
-
-	FHitResult Looked;
-	//FVector Start = temp->GetCameraLocation();
-	//FVector End = temp->GetCameraLocation() + (GetActorForwardVector() * 500);
+	FHitResult LookedAt;
 
 	FVector Start = GetActorTransform().GetLocation();
 	FVector End = GetActorTransform().GetLocation() + (GetActorForwardVector() * 500);
+
+	//////////////////////////////
+
+	FHitResult LookedAt2;
+
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		int32 ViewportWidth, ViewportHeight;
+		PlayerController->GetViewportSize(ViewportWidth, ViewportHeight);
+
+		// Calculate the center of the viewport
+		FVector2D CenterOfViewport(ViewportWidth / 2.0f, ViewportHeight / 2.0f);
+
+		FVector WorldLocation;
+		FVector WorldDirection;
+
+		// De-project the screen position to a world location and direction
+		PlayerController->DeprojectScreenPositionToWorld(CenterOfViewport.X, CenterOfViewport.Y, WorldLocation, WorldDirection);
+
+		FVector Start2 = WorldLocation;
+		FVector End2 = Start2 + (WorldDirection * 1000.0f); // Extend the line trace to 500 units
+
+		// Draw a debug line from the center of the player's camera
+		DrawDebugLine(GetWorld(), Start2, End2, FColor::Yellow, false, 5.0f, 0, 5.0f);
+
+		UE_LOG(LogTemp, Warning, TEXT("Start: %s, End: %s"), *Start2.ToString(), *End2.ToString());
+
+		FCollisionObjectQueryParams ObjectParams2;
+		ObjectParams2.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+
+		FCollisionQueryParams Params2;
+		Params2.AddIgnoredActor(this);
+
+		GetWorld()->LineTraceSingleByObjectType(LookedAt2, Start2, End2, ObjectParams2, Params2);
+
+		UE_LOG(LogTemp, Warning, TEXT("Looked at: %s"), *LookedAt2.ToString());
+	}
+
+
+	///////////////////////////////
 
 	FCollisionObjectQueryParams ObjectParams;
 	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
@@ -241,7 +277,7 @@ void AMyCharacter::LineTrace()
 	Params.AddIgnoredActor(this);
 
 
-	GetWorld()->LineTraceSingleByObjectType(Looked, Start, End, ObjectParams, Params);
+	GetWorld()->LineTraceSingleByObjectType(LookedAt, Start, End, ObjectParams, Params);
 
 	//if (Looked.GetActor())
 	//{
