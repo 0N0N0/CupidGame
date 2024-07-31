@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include "Blueprint/UserWidget.h"
+#include "Particles/ParticleSystemComponent.h"
 
 
 // Sets default values
@@ -121,21 +122,14 @@ void AMyCharacter::MyStopJumping()
 
 void AMyCharacter::Shoot()
 {
-	LineTrace();
-
 	if (!bIsShooting && !GetCharacterMovement()->IsFalling())
 	{
 		bIsShooting = true;
 
 		PlayMontageAndSetTimer(ShootingMontage);
 
-		GetWorldTimerManager().SetTimer(TimerHandleForBullet, this, &AMyCharacter::SpawnBullet, 1.0f, false);
+		GetWorldTimerManager().SetTimer(TimerHandleForBullet, this, &AMyCharacter::LinesTraceAndAddEffects, 1.0f, false);
 	}
-}
-
-void AMyCharacter::StopShooting()
-{
-	
 }
 
 void AMyCharacter::PlayMontageAndSetTimer(UAnimMontage* MontageToPlay)
@@ -185,7 +179,6 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMyCharacter::MyStopJumping);
 
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AMyCharacter::Shoot);
-		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AMyCharacter::StopShooting);
 
 		EnhancedInputComponent->BindAction(TurnLeftRightAction, ETriggerEvent::Triggered, this, &AMyCharacter::TurnLeftRight);
 		EnhancedInputComponent->BindAction(TurnUpDownAction, ETriggerEvent::Triggered, this, &AMyCharacter::TurnUpDown);
@@ -205,86 +198,86 @@ bool AMyCharacter::GetIsShooting()
 	return bIsShooting;
 }
 
-void AMyCharacter::SpawnBullet()
+void AMyCharacter::LinesTraceAndAddEffects()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 100.f, FColor::Red, TEXT("BulletSpawned!"));
-	FActorSpawnParameters spawnParams;
-	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	bool hit = false;
 
-	FRotator actorRotation = GetActorTransform().GetRotation().GetForwardVector().ToOrientationRotator();
-	FVector actorLocation = FVector(GetActorTransform().GetLocation().X, GetActorTransform().GetLocation().Y, GetActorTransform().GetLocation().Z);
-	actorLocation += GetActorTransform().GetRotation().GetRightVector() * Offset.X;
-	actorLocation += GetActorTransform().GetRotation().GetForwardVector() * Offset.Y;
-	actorLocation += GetActorTransform().GetRotation().GetUpVector() * Offset.Z;
-	FVector actorScale = Scale;
-
-	FTransform transform = FTransform(actorRotation, actorLocation, actorScale);
-
-	GetWorld()->SpawnActor<AActor>(BulletBP, transform, spawnParams);
-}
-
-void AMyCharacter::LineTrace()
-{
-	FHitResult LookedAt;
-
-	FVector Start = GetActorTransform().GetLocation();
-	FVector End = GetActorTransform().GetLocation() + (GetActorForwardVector() * 500);
-
-	//////////////////////////////
-
-	FHitResult LookedAt2;
+	FHitResult LookedAtFromCam;
 
 	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 	{
 		int32 ViewportWidth, ViewportHeight;
 		PlayerController->GetViewportSize(ViewportWidth, ViewportHeight);
 
-		// Calculate the center of the viewport
 		FVector2D CenterOfViewport(ViewportWidth / 2.0f, ViewportHeight / 2.0f);
 
 		FVector WorldLocation;
 		FVector WorldDirection;
 
-		// De-project the screen position to a world location and direction
 		PlayerController->DeprojectScreenPositionToWorld(CenterOfViewport.X, CenterOfViewport.Y, WorldLocation, WorldDirection);
 
-		FVector Start2 = WorldLocation;
-		FVector End2 = Start2 + (WorldDirection * 1000.0f); // Extend the line trace to 500 units
+		FVector StartCam = WorldLocation;
+		FVector EndCam = StartCam + (WorldDirection * 3000.0f);
 
-		// Draw a debug line from the center of the player's camera
-		DrawDebugLine(GetWorld(), Start2, End2, FColor::Yellow, false, 5.0f, 0, 5.0f);
+		DrawDebugLine(GetWorld(), StartCam, EndCam, FColor::Yellow, false, 5.0f, 0, 5.0f);
 
-		UE_LOG(LogTemp, Warning, TEXT("Start: %s, End: %s"), *Start2.ToString(), *End2.ToString());
+		FCollisionObjectQueryParams ObjectParamsCam;
+		ObjectParamsCam.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+		ObjectParamsCam.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+		ObjectParamsCam.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
 
-		FCollisionObjectQueryParams ObjectParams2;
-		ObjectParams2.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+		FCollisionQueryParams ParamsCam;
+		ParamsCam.AddIgnoredActor(this);
 
-		FCollisionQueryParams Params2;
-		Params2.AddIgnoredActor(this);
+		if (GetWorld()->LineTraceSingleByObjectType(LookedAtFromCam, StartCam, EndCam, ObjectParamsCam, ParamsCam))
+		{
+			//////////
+			UE_LOG(LogTemp, Warning, TEXT("First result: %s"), *LookedAtFromCam.GetActor()->GetActorLabel());
+			/////////
 
-		GetWorld()->LineTraceSingleByObjectType(LookedAt2, Start2, End2, ObjectParams2, Params2);
+			if (LookedAtFromCam.GetActor() && LookedAtFromCam.GetActor()->ActorHasTag("NPC"))
+			{
+				FHitResult LookedAt;
 
-		UE_LOG(LogTemp, Warning, TEXT("Looked at: %s"), *LookedAt2.ToString());
+				FVector Start = GetActorTransform().GetLocation();
+				FVector HitDirection = (LookedAtFromCam.ImpactPoint - StartCam).GetSafeNormal();
+				float OffsetDistance = 10.f; // Adjust this value as needed
+				FVector End = LookedAtFromCam.ImpactPoint + HitDirection * OffsetDistance; // Add offset to ensure hit
+
+				FCollisionObjectQueryParams ObjectParams;
+				ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+				ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+				ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+
+				FCollisionQueryParams Params;
+				Params.AddIgnoredActor(this);
+
+				//DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f, 0, 5.f);
+
+				if (GetWorld()->LineTraceSingleByObjectType(LookedAt, Start, End, ObjectParams, Params))
+				{
+					/////////
+					UE_LOG(LogTemp, Warning, TEXT("Second result: %s"), *LookedAt.GetActor()->GetActorLabel());
+					//////////
+ 
+					if (LookedAt.GetActor() && LookedAt.GetActor()->ActorHasTag("NPC"))
+					{
+						DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, 0, 5.f);
+						if (LoveEffect)
+						{
+							UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LoveEffect, LookedAt.Location);
+							hit = true;
+						}
+					}
+				}
+			}
+		}
+		if (!hit)
+		{
+			if (MissShootEffect)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MissShootEffect, LookedAtFromCam.Location);
+			}
+		}
 	}
-
-
-	///////////////////////////////
-
-	FCollisionObjectQueryParams ObjectParams;
-	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
-
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-
-
-	GetWorld()->LineTraceSingleByObjectType(LookedAt, Start, End, ObjectParams, Params);
-
-	//if (Looked.GetActor())
-	//{
-	//	// add snapping to object
-	//	LookedActor = Looked.GetActor();
-	//	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, LookedActor->GetActorLabel());
-	//}
-
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, 0, 5.f);
 }

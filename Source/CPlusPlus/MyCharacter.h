@@ -45,7 +45,6 @@ protected:
 	bool bIsJumping;
 
 	void Shoot();
-	void StopShooting();
 
 	UPROPERTY(BlueprintReadOnly, Category = "Action", meta = (AllowPrivateAccess = "true"))
 	bool bIsShooting;
@@ -82,14 +81,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Animation montage")
 	UAnimMontage* ShootingMontage;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
-	TSubclassOf<AActor> BulletBP;
+	UPROPERTY(EditDefaultsOnly, Category = Effects)
+	class UParticleSystem* LoveEffect;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
-	FVector Offset = FVector(20, 150, 25);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
-	FVector Scale = FVector(0.1, 0.1, 0.1);
+	UPROPERTY(EditDefaultsOnly, Category = Effects)
+	class UParticleSystem* MissShootEffect;
 
 
 	void PlayMontageAndSetTimer(UAnimMontage* MontageToPlay);
@@ -98,9 +94,7 @@ private:
 	FTimerHandle TimerHandle;
 	FTimerHandle TimerHandleForBullet;
 
-
-	void SpawnBullet();
-	void LineTrace();
+	void LinesTraceAndAddEffects();
 
 	TSubclassOf<class UUserWidget> ScopeWidgetClass;
 };
