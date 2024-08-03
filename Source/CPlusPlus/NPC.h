@@ -5,6 +5,10 @@
 #include "CoreMinimal.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "GameFramework/Character.h"
+#include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+
 #include "NPC.generated.h"
 
 UCLASS()
@@ -30,4 +34,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	UBehaviorTree* Tree;
+
+private:
+	// Static mesh component
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* StaticMeshComponent;
+
+	// Function to set a random color on the static mesh
+	void SetRandomColor();
+
+	// Helper function to generate a random color
+	FLinearColor GetRandomColor() const;
+
 };

@@ -13,6 +13,7 @@ void EmptyLinkFunctionForGeneratedCodeNPC() {}
 	CPLUSPLUS_API UClass* Z_Construct_UClass_ANPC();
 	CPLUSPLUS_API UClass* Z_Construct_UClass_ANPC_NoRegister();
 	ENGINE_API UClass* Z_Construct_UClass_ACharacter();
+	ENGINE_API UClass* Z_Construct_UClass_UStaticMeshComponent_NoRegister();
 	UPackage* Z_Construct_UPackage__Script_CPlusPlus();
 // End Cross Module References
 	void ANPC::StaticRegisterNativesANPC()
@@ -33,6 +34,10 @@ void EmptyLinkFunctionForGeneratedCodeNPC() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_Tree_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_Tree;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_StaticMeshComponent_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_StaticMeshComponent;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
@@ -57,8 +62,23 @@ void EmptyLinkFunctionForGeneratedCodeNPC() {}
 	};
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ANPC_Statics::NewProp_Tree = { "Tree", nullptr, (EPropertyFlags)0x0020080000000005, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ANPC, Tree), Z_Construct_UClass_UBehaviorTree_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_ANPC_Statics::NewProp_Tree_MetaData), Z_Construct_UClass_ANPC_Statics::NewProp_Tree_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_ANPC_Statics::NewProp_StaticMeshComponent_MetaData[] = {
+		{ "Category", "NPC" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Static mesh component\n" },
+#endif
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "NPC.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Static mesh component" },
+#endif
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ANPC_Statics::NewProp_StaticMeshComponent = { "StaticMeshComponent", nullptr, (EPropertyFlags)0x00400000000a0009, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ANPC, StaticMeshComponent), Z_Construct_UClass_UStaticMeshComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_ANPC_Statics::NewProp_StaticMeshComponent_MetaData), Z_Construct_UClass_ANPC_Statics::NewProp_StaticMeshComponent_MetaData) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_ANPC_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ANPC_Statics::NewProp_Tree,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ANPC_Statics::NewProp_StaticMeshComponent,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_ANPC_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<ANPC>::IsAbstract,
@@ -98,9 +118,9 @@ void EmptyLinkFunctionForGeneratedCodeNPC() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Unreal_Engine_5_Unreal_Projects_CPlusPlus_Source_CPlusPlus_NPC_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_ANPC, ANPC::StaticClass, TEXT("ANPC"), &Z_Registration_Info_UClass_ANPC, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ANPC), 3617904240U) },
+		{ Z_Construct_UClass_ANPC, ANPC::StaticClass, TEXT("ANPC"), &Z_Registration_Info_UClass_ANPC, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ANPC), 3008350528U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Unreal_Engine_5_Unreal_Projects_CPlusPlus_Source_CPlusPlus_NPC_h_4091419602(TEXT("/Script/CPlusPlus"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Unreal_Engine_5_Unreal_Projects_CPlusPlus_Source_CPlusPlus_NPC_h_3041186314(TEXT("/Script/CPlusPlus"),
 		Z_CompiledInDeferFile_FID_Unreal_Engine_5_Unreal_Projects_CPlusPlus_Source_CPlusPlus_NPC_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Unreal_Engine_5_Unreal_Projects_CPlusPlus_Source_CPlusPlus_NPC_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);
