@@ -35,6 +35,12 @@
     <Filter Include="Source\CPlusPlus">
       <UniqueIdentifier>{0BC17F2C-B101-32BE-BF69-17C682A01F0C}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\CPlusPlus\BoxSpawner.cpp">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\CPlusPlus\BoxSpawner.h">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClInclude>
     <ClCompile Include="..\..\Source\CPlusPlus\BTTask_FindPlayerLocation.cpp">
       <Filter>Source\CPlusPlus</Filter>
     </ClCompile>
@@ -45,12 +51,6 @@
       <Filter>Source\CPlusPlus</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\CPlusPlus\BTTask_FindRandomLocation.h">
-      <Filter>Source\CPlusPlus</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\CPlusPlus\Bullet.cpp">
-      <Filter>Source\CPlusPlus</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\CPlusPlus\Bullet.h">
       <Filter>Source\CPlusPlus</Filter>
     </ClInclude>
     <None Include="..\..\Source\CPlusPlus\CPlusPlus.Build.cs">
@@ -96,6 +96,18 @@
       <Filter>Source\CPlusPlus</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\CPlusPlus\NPC_AIController.h">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\CPlusPlus\Scope.cpp">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\CPlusPlus\Scope.h">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\CPlusPlus\ScopeWidget.cpp">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\CPlusPlus\ScopeWidget.h">
       <Filter>Source\CPlusPlus</Filter>
     </ClInclude>
   </ItemGroup>

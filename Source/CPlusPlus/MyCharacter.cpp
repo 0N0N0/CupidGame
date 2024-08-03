@@ -219,7 +219,7 @@ void AMyCharacter::LinesTraceAndAddEffects()
 		FVector StartCam = WorldLocation;
 		FVector EndCam = StartCam + (WorldDirection * 3000.0f);
 
-		DrawDebugLine(GetWorld(), StartCam, EndCam, FColor::Yellow, false, 5.0f, 0, 5.0f);
+		//DrawDebugLine(GetWorld(), StartCam, EndCam, FColor::Yellow, false, 5.0f, 0, 5.0f);
 
 		FCollisionObjectQueryParams ObjectParamsCam;
 		ObjectParamsCam.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
@@ -262,7 +262,7 @@ void AMyCharacter::LinesTraceAndAddEffects()
  
 					if (LookedAt.GetActor() && LookedAt.GetActor()->ActorHasTag("NPC"))
 					{
-						DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, 0, 5.f);
+						//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, 0, 5.f);
 						if (LoveEffect)
 						{
 							UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LoveEffect, LookedAt.Location);
