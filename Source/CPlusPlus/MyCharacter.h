@@ -10,6 +10,8 @@
 
 #include "MyCharacter.generated.h"
 
+class ANPC;
+
 UCLASS()
 class CPLUSPLUS_API AMyCharacter : public ACharacter
 {
@@ -27,6 +29,10 @@ public:
 
 	bool GetIsJumping();
 	bool GetIsShooting();
+
+	void DisappearNPCs();
+
+	FVector GetLocationForAIMeeting();
 
 protected:
 	// Called when the game starts or when spawned
@@ -93,8 +99,17 @@ private:
 
 	FTimerHandle TimerHandle;
 	FTimerHandle TimerHandleForBullet;
+	FTimerHandle TimerHandleForNPC;
 
 	void LinesTraceAndAddEffects();
 
 	TSubclassOf<class UUserWidget> ScopeWidgetClass;
+
+	FLinearColor LastHitColor;
+	bool bColorMatch;
+	ANPC* FirstMatchedNPC;
+	ANPC* SecondMatchedNPC;
+	FLinearColor StoredColor;
+
+	FVector LocationForAIMeeting;
 };

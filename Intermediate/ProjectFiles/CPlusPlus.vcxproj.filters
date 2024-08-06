@@ -53,6 +53,18 @@
     <ClInclude Include="..\..\Source\CPlusPlus\BTTask_FindRandomLocation.h">
       <Filter>Source\CPlusPlus</Filter>
     </ClInclude>
+    <ClCompile Include="..\..\Source\CPlusPlus\BTTask_MeetAnotherAI.cpp">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\CPlusPlus\BTTask_MeetAnotherAI.h">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\CPlusPlus\Bullet.cpp">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\CPlusPlus\Bullet.h">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClInclude>
     <None Include="..\..\Source\CPlusPlus\CPlusPlus.Build.cs">
       <Filter>Source\CPlusPlus</Filter>
     </None>

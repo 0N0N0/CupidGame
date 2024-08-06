@@ -7,6 +7,7 @@
 #include "NavigationSystem.h"
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "MyCharacter.h"
 
 UBTTask_FindPlayerLocation::UBTTask_FindPlayerLocation(FObjectInitializer const& ObjectInitializer)
 {

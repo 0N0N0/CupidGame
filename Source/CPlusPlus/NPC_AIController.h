@@ -17,6 +17,11 @@ class CPLUSPLUS_API ANPC_AIController : public AAIController
 public:
 	explicit ANPC_AIController(FObjectInitializer const& ObjectInitializer);
 
+	void SetBoolValueInBlackboard(FName Name, bool Value);
+	void SetVectorValueInBlackboard(FName Name, FVector Value);
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
+
+	UBlackboardComponent* Blackboard;
 };

@@ -10,6 +10,8 @@
 #include <Kismet/GameplayStatics.h>
 #include "Blueprint/UserWidget.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "NPC.h"
+#include "NPC_AIController.h"
 
 
 // Sets default values
@@ -132,6 +134,11 @@ void AMyCharacter::Shoot()
 	}
 }
 
+FVector AMyCharacter::GetLocationForAIMeeting()
+{
+	return LocationForAIMeeting;
+}
+
 void AMyCharacter::PlayMontageAndSetTimer(UAnimMontage* MontageToPlay)
 {
 	if (!GetCurrentMontage())
@@ -200,84 +207,126 @@ bool AMyCharacter::GetIsShooting()
 
 void AMyCharacter::LinesTraceAndAddEffects()
 {
-	bool hit = false;
+    bool hit = false;
 
-	FHitResult LookedAtFromCam;
+    FHitResult LookedAtFromCam;
 
-	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
-	{
-		int32 ViewportWidth, ViewportHeight;
-		PlayerController->GetViewportSize(ViewportWidth, ViewportHeight);
+    if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+    {
+        int32 ViewportWidth, ViewportHeight;
+        PlayerController->GetViewportSize(ViewportWidth, ViewportHeight);
 
-		FVector2D CenterOfViewport(ViewportWidth / 2.0f, ViewportHeight / 2.0f);
+        FVector2D CenterOfViewport(ViewportWidth / 2.0f, ViewportHeight / 2.0f);
 
-		FVector WorldLocation;
-		FVector WorldDirection;
+        FVector WorldLocation;
+        FVector WorldDirection;
 
-		PlayerController->DeprojectScreenPositionToWorld(CenterOfViewport.X, CenterOfViewport.Y, WorldLocation, WorldDirection);
+        PlayerController->DeprojectScreenPositionToWorld(CenterOfViewport.X, CenterOfViewport.Y, WorldLocation, WorldDirection);
 
-		FVector StartCam = WorldLocation;
-		FVector EndCam = StartCam + (WorldDirection * 3000.0f);
+        FVector StartCam = WorldLocation;
+        FVector EndCam = StartCam + (WorldDirection * 3000.0f);
 
-		//DrawDebugLine(GetWorld(), StartCam, EndCam, FColor::Yellow, false, 5.0f, 0, 5.0f);
+        FCollisionObjectQueryParams ObjectParamsCam;
+        ObjectParamsCam.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+        ObjectParamsCam.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+        ObjectParamsCam.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
 
-		FCollisionObjectQueryParams ObjectParamsCam;
-		ObjectParamsCam.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
-		ObjectParamsCam.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
-		ObjectParamsCam.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+        FCollisionQueryParams ParamsCam;
+        ParamsCam.AddIgnoredActor(this);
 
-		FCollisionQueryParams ParamsCam;
-		ParamsCam.AddIgnoredActor(this);
+        if (GetWorld()->LineTraceSingleByObjectType(LookedAtFromCam, StartCam, EndCam, ObjectParamsCam, ParamsCam))
+        {
+            if (LookedAtFromCam.GetActor() && LookedAtFromCam.GetActor()->ActorHasTag("NPC"))
+            {
+                FHitResult LookedAt;
+                FVector Start = GetActorTransform().GetLocation();
+                FVector HitDirection = (LookedAtFromCam.ImpactPoint - StartCam).GetSafeNormal();
+                float OffsetDistance = 10.f; // Adjust this value as needed
+                FVector End = LookedAtFromCam.ImpactPoint + HitDirection * OffsetDistance; // Add offset to ensure hit
 
-		if (GetWorld()->LineTraceSingleByObjectType(LookedAtFromCam, StartCam, EndCam, ObjectParamsCam, ParamsCam))
-		{
-			//////////
-			UE_LOG(LogTemp, Warning, TEXT("First result: %s"), *LookedAtFromCam.GetActor()->GetActorLabel());
-			/////////
+                FCollisionObjectQueryParams ObjectParams;
+                ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+                ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+                ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
 
-			if (LookedAtFromCam.GetActor() && LookedAtFromCam.GetActor()->ActorHasTag("NPC"))
-			{
-				FHitResult LookedAt;
+                FCollisionQueryParams Params;
+                Params.AddIgnoredActor(this);
 
-				FVector Start = GetActorTransform().GetLocation();
-				FVector HitDirection = (LookedAtFromCam.ImpactPoint - StartCam).GetSafeNormal();
-				float OffsetDistance = 10.f; // Adjust this value as needed
-				FVector End = LookedAtFromCam.ImpactPoint + HitDirection * OffsetDistance; // Add offset to ensure hit
+                if (GetWorld()->LineTraceSingleByObjectType(LookedAt, Start, End, ObjectParams, Params))
+                {
+                    if (LookedAt.GetActor() && LookedAt.GetActor()->ActorHasTag("NPC"))
+                    {
+                        ANPC* HitNPC = Cast<ANPC>(LookedAt.GetActor());
+                        if (HitNPC)
+                        {
+                            FLinearColor CurrentColor = HitNPC->GetColor();
+                            if (CurrentColor == LastHitColor)
+                            {
+                                bColorMatch = true;
+                                SecondMatchedNPC = HitNPC;
 
-				FCollisionObjectQueryParams ObjectParams;
-				ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
-				ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
-				ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+							if (ANPC_AIController* FirstController = FirstMatchedNPC->GetAIController())
+							{
+								if (ANPC_AIController* SecondController = SecondMatchedNPC->GetAIController())
+								{
+									FirstController->SetBoolValueInBlackboard("bIsCoupleCreated", true);
+									SecondController->SetBoolValueInBlackboard("bIsCoupleCreated", true);
 
-				FCollisionQueryParams Params;
-				Params.AddIgnoredActor(this);
+									// Calculate meeting location between the two NPCs
+									//LocationForAIMeeting = (FirstMatchedNPC->GetActorLocation() + SecondMatchedNPC->GetActorLocation()) / 2.0f;
+									LocationForAIMeeting = FVector(350, 280, 88);
+								}
+							}
 
-				//DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f, 0, 5.f);
+                                //////////////////////////////////////
 
-				if (GetWorld()->LineTraceSingleByObjectType(LookedAt, Start, End, ObjectParams, Params))
-				{
-					/////////
-					UE_LOG(LogTemp, Warning, TEXT("Second result: %s"), *LookedAt.GetActor()->GetActorLabel());
-					//////////
- 
-					if (LookedAt.GetActor() && LookedAt.GetActor()->ActorHasTag("NPC"))
-					{
-						//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, 0, 5.f);
-						if (LoveEffect)
-						{
-							UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LoveEffect, LookedAt.Location);
-							hit = true;
-						}
-					}
-				}
-			}
-		}
-		if (!hit)
-		{
-			if (MissShootEffect)
-			{
-				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MissShootEffect, LookedAtFromCam.Location);
-			}
-		}
-	}
+							GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("true"));
+                            }
+                            else
+                            {
+                                bColorMatch = false;
+                                LastHitColor = CurrentColor; // Update to the new color
+                                FirstMatchedNPC = HitNPC; // Store the first matched NPC
+
+							GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("false"));
+                            }
+
+                            // Store the color somewhere
+                            StoredColor = CurrentColor; // Assuming you have a member variable to store the color
+
+                            if (LoveEffect)
+                            {
+                                UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LoveEffect, LookedAt.Location);
+                                hit = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!hit)
+        {
+            if (MissShootEffect)
+            {
+                UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MissShootEffect, LookedAtFromCam.Location);
+            }
+        }
+    }
+}
+
+void AMyCharacter::DisappearNPCs()
+{
+    if (FirstMatchedNPC && FirstMatchedNPC->IsValidLowLevel())
+    {
+        FirstMatchedNPC->Destroy();
+    }
+
+    if (SecondMatchedNPC && SecondMatchedNPC->IsValidLowLevel())
+    {
+        SecondMatchedNPC->Destroy();
+    }
+
+    // Reset pointers after destruction
+    FirstMatchedNPC = nullptr;
+    SecondMatchedNPC = nullptr;
 }

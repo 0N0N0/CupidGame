@@ -19,13 +19,30 @@ void ABoxSpawner::BeginPlay()
 
 	FTimerHandle TimerHandle;
 
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABoxSpawner::Spawn, SpawnObjectCount, bShouldSpawnLoop, 1.f);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABoxSpawner::Spawn, SpawnObjectCount, bShouldSpawnLoop, 2.f);
 }
 
 void ABoxSpawner::Spawn()
 {
-    if (SpawnerClass && BoxSpawner)  // Check if SpawnerClass and BoxSpawner are valid
+    if (SpawnerClass && BoxSpawner)
     {
+        TArray<FLinearColor> Colors;
+
+        if (SpawnerClass->IsChildOf(ANPC::StaticClass()))
+        {
+            for (int i = 0; i < SpawnObjectCount / 2; i++)
+            {
+                FLinearColor Color = FLinearColor::MakeRandomColor();
+                Colors.Add(Color);
+                Colors.Add(Color);
+            }
+
+            if (SpawnObjectCount % 2 != 0)
+            {
+                Colors.Add(FLinearColor::MakeRandomColor());
+            }
+        }
+
         for (int a = 0; a < SpawnObjectCount; a++)
         {
             FRotator Rotation(0, 0, 0);
@@ -34,15 +51,26 @@ void ABoxSpawner::Spawn()
             if (SpawnerClass->IsChildOf(ANPC::StaticClass()))
             {
                 ANPC* SpawnedAI = GetWorld()->SpawnActor<ANPC>(SpawnerClass, RandomLocation, Rotation);
-                if (SpawnedAI && AIControllerClass)  // Check if SpawnedAI and AIControllerClass are valid
+                if (SpawnedAI && AIControllerClass)
                 {
                     SpawnedAI->AIControllerClass = AIControllerClass;
                     SpawnedAI->SpawnDefaultController();
+
+                    UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(MaterialInterface, this);
+
+                    if (DynamicMaterial)
+                    {
+                        DynamicMaterial->SetVectorParameterValue(FName("BaseColor"), Colors[a]);
+
+                        SpawnedAI->GetMesh()->SetMaterial(0, DynamicMaterial);
+
+                        SpawnedAI->SetColor(Colors[a]);
+                    }
                 }
             }
             else
             {
-                GetWorld()->SpawnActor<AActor>(SpawnerClass, RandomLocation, Rotation);
+                auto Actor = GetWorld()->SpawnActor<AActor>(SpawnerClass, RandomLocation, Rotation);
             }
         }
     }

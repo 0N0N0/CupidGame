@@ -11,6 +11,8 @@
 
 #include "NPC.generated.h"
 
+class ANPC_AIController;
+
 UCLASS()
 class CPLUSPLUS_API ANPC : public ACharacter
 {
@@ -28,6 +30,14 @@ public:
 
 	UBehaviorTree* GetBehaviorTree() const;
 
+	UFUNCTION()
+	void OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor);
+
+	ANPC_AIController* GetAIController() const;
+
+	void SetColor(FLinearColor newColor);
+	FLinearColor GetColor();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,14 +46,8 @@ protected:
 	UBehaviorTree* Tree;
 
 private:
-	// Static mesh component
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* StaticMeshComponent;
 
-	// Function to set a random color on the static mesh
-	void SetRandomColor();
+	FVector TargetLocation;
 
-	// Helper function to generate a random color
-	FLinearColor GetRandomColor() const;
-
+	FLinearColor Color;
 };
