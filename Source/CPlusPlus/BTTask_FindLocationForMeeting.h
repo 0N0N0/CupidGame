@@ -2,15 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTTask_MoveToPartner.generated.h"
+#include "BTTask_FindLocationForMeeting.generated.h"
 
 UCLASS()
-class CPLUSPLUS_API UBTTask_MoveToPartner : public UBTTaskNode
+class CPLUSPLUS_API UBTTask_FindLocationForMeeting : public UBTTaskNode
 {
     GENERATED_BODY()
 
 public:
-    UBTTask_MoveToPartner();
+    UBTTask_FindLocationForMeeting();
 
 protected:
     virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

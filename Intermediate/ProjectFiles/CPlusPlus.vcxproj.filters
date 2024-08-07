@@ -53,22 +53,10 @@
     <ClInclude Include="..\..\Source\CPlusPlus\BTTask_FindRandomLocation.h">
       <Filter>Source\CPlusPlus</Filter>
     </ClInclude>
-    <ClCompile Include="..\..\Source\CPlusPlus\BTTask_MeetAnotherAI.cpp">
+    <ClCompile Include="..\..\Source\CPlusPlus\BTTask_FindLocationForMeeting.cpp">
       <Filter>Source\CPlusPlus</Filter>
     </ClCompile>
-    <ClInclude Include="..\..\Source\CPlusPlus\BTTask_MeetAnotherAI.h">
-      <Filter>Source\CPlusPlus</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\CPlusPlus\BTTask_MoveToPartner.cpp">
-      <Filter>Source\CPlusPlus</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\CPlusPlus\BTTask_MoveToPartner.h">
-      <Filter>Source\CPlusPlus</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\CPlusPlus\Bullet.cpp">
-      <Filter>Source\CPlusPlus</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\CPlusPlus\Bullet.h">
+    <ClInclude Include="..\..\Source\CPlusPlus\BTTask_FindLocationForMeeting.h">
       <Filter>Source\CPlusPlus</Filter>
     </ClInclude>
     <None Include="..\..\Source\CPlusPlus\CPlusPlus.Build.cs">
@@ -114,18 +102,6 @@
       <Filter>Source\CPlusPlus</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\CPlusPlus\NPC_AIController.h">
-      <Filter>Source\CPlusPlus</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\CPlusPlus\Scope.cpp">
-      <Filter>Source\CPlusPlus</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\CPlusPlus\Scope.h">
-      <Filter>Source\CPlusPlus</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\CPlusPlus\ScopeWidget.cpp">
-      <Filter>Source\CPlusPlus</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\CPlusPlus\ScopeWidget.h">
       <Filter>Source\CPlusPlus</Filter>
     </ClInclude>
   </ItemGroup>

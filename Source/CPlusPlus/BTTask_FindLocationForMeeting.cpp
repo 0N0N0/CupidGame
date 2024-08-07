@@ -1,14 +1,14 @@
-#include "BTTask_MoveToPartner.h"
+#include "BTTask_FindLocationForMeeting.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
 #include "AIController.h"
 
-UBTTask_MoveToPartner::UBTTask_MoveToPartner()
+UBTTask_FindLocationForMeeting::UBTTask_FindLocationForMeeting()
 {
     NodeName = "Find Location For Meeting";
 }
 
-EBTNodeResult::Type UBTTask_MoveToPartner::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_FindLocationForMeeting::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     AAIController* AIController = OwnerComp.GetAIOwner();
     if (!AIController) return EBTNodeResult::Failed;
