@@ -12,6 +12,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "NPC.h"
 #include "NPC_AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 
 // Sets default values
@@ -269,8 +270,14 @@ void AMyCharacter::LinesTraceAndAddEffects()
 							{
 								if (ANPC_AIController* SecondController = SecondMatchedNPC->GetAIController())
 								{
-									FirstController->SetBoolValueInBlackboard("bIsCoupleCreated", true);
-									SecondController->SetBoolValueInBlackboard("bIsCoupleCreated", true);
+									//FirstController->SetBoolValueInBlackboard("bIsCoupleCreated", true);
+									//SecondController->SetBoolValueInBlackboard("bIsCoupleCreated", true);
+
+									FirstController->GetBlackboardComponent()->SetValueAsBool("bIsCoupleCreated", true);
+									SecondController->GetBlackboardComponent()->SetValueAsBool("bIsCoupleCreated", true);
+
+									FirstController->GetBlackboardComponent()->SetValueAsObject("PartnerNPC", SecondMatchedNPC);
+									SecondController->GetBlackboardComponent()->SetValueAsObject("PartnerNPC", FirstMatchedNPC);
 
 									// Calculate meeting location between the two NPCs
 									//LocationForAIMeeting = (FirstMatchedNPC->GetActorLocation() + SecondMatchedNPC->GetActorLocation()) / 2.0f;

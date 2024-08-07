@@ -59,6 +59,12 @@
     <ClInclude Include="..\..\Source\CPlusPlus\BTTask_MeetAnotherAI.h">
       <Filter>Source\CPlusPlus</Filter>
     </ClInclude>
+    <ClCompile Include="..\..\Source\CPlusPlus\BTTask_MoveToPartner.cpp">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\CPlusPlus\BTTask_MoveToPartner.h">
+      <Filter>Source\CPlusPlus</Filter>
+    </ClInclude>
     <ClCompile Include="..\..\Source\CPlusPlus\Bullet.cpp">
       <Filter>Source\CPlusPlus</Filter>
     </ClCompile>
